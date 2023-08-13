@@ -7,23 +7,20 @@ flag_raw=false
 flag_list=false
 flag_filter=false
 categoryName=""
-script_args=()
 
-while [ $OPTIND -le "$#" ]
-do
-		if getopts rlf: option
-		then
-				case $option
-				in
-					r) flag_raw=true;;
-					l) flag_list=true;;
-			    f) flag_filter=true; categoryName="$OPTARG";;
-					*) exit 1 # Ensure that code does not run.
-				esac
-		else
-#				script_args+=("${!OPTIND}")
-				((OPTIND++))
-		fi
+while [ $# -gt 0 ]; do
+  case $1 in
+    -r | --raw) flag_raw=true;;
+    -l | --list) flag_list=true;;
+    -f | --filter)
+      flag_filter=true;
+      [ -z "$2" ] && echo "error: -f --filter requires a category name" && exit 1
+      categoryName=$2;
+      shift
+      ;;
+    *) echo "error: unrecognized option $1" && exit 1;;
+  esac
+  shift
 done
 
 if [ $flag_raw = true  ]; then
